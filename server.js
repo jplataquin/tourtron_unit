@@ -52,6 +52,8 @@ function initialize(path){
         return console.log('Error opening port: ', err.message)
       }
       
+      console.log('Port '+path+' openned');
+
       resolve({
         port:port,
         parser:parser,
@@ -115,13 +117,15 @@ getPort().then(path=>{
     let status;
     let delayStop = 3000;
 
-    /*
+    
     //Send back serial data
     serial.parser.emit('data',(data)=>{
       status = data;
-      socket.emit('data',data);
+
+      console.log(data);
+      //socket.emit('data',data);
     });
-    */
+    
 
     
     //Forward
