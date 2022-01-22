@@ -35,7 +35,7 @@ function initialize(path){
 
     const port = new SerialPort(path,{
       baudRate: 115200//9600
-    },false);
+    });
 
     //Do clean up
     nodeCleanup(()=>{
@@ -47,7 +47,7 @@ function initialize(path){
     //{ delimiter: '\r\n' }
     const parser  = port.pipe(new Readline());
 
-    port.open( (err) => {
+    port.on('open',(err) => {
       if (err) {
         return console.log('Error opening port: ', err.message)
       }
