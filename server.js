@@ -11,16 +11,19 @@ const config = {
 };
 
 
-function getPortsList(){
-    let portsList = [];
-  
-    return SerialPort.list().then((ports) => {
+function getPort(){
+   
+    return new Promise((resolve,reject) => {
       
-      ports.forEach((port) => {
-        portsList.push(port);
+      SerialPort.list().then((ports) => {
+      
+        ports.forEach((port) => {
+          if(port.productId == 7523){
+            resolve(port.path);
+          }
+        });
       });
-  
-      return portsList;
+
     });
 };
 
@@ -74,8 +77,6 @@ function initialize(path){
     
     });
     
-
-
     port.on('close',()=>{
       console.log('Port closed');
     });
@@ -86,15 +87,11 @@ function initialize(path){
 
 
 
-getPortsList().then(item=>{
-  console.log(item);
+getPort().then(path=>{
 
-  return true;
-}).then(path=>{
+  console.log(path);
 
-  //return initialize(path);
-
-  return true;
+  return initialize(path);
 
 }).then(serial=>{
 
