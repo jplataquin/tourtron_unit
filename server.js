@@ -119,7 +119,7 @@ getPort().then(path=>{
 
     
     //Send back serial data
-    serial.parser.emit('data',(data)=>{
+    serial.parser.on('data',(data)=>{
       status = data;
 
       console.log(data);
