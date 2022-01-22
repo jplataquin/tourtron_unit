@@ -119,6 +119,7 @@ getPort().then(path=>{
 
     
     //Send back serial data
+    /*
     serial.parser.on('data',(data)=>{
       status = data;
 
@@ -126,7 +127,7 @@ getPort().then(path=>{
       //socket.emit('data',data);
     });
     
-
+    */
     
     //Forward
     socket.on('forward',()=>{
@@ -134,11 +135,11 @@ getPort().then(path=>{
       clearTimeout(cancelCommand);
 
       console.log('FORWARD');
-      //serial.send('FORWARD');
+      serial.send('FORWARD');
 
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
-        //serial.send('STOP');
+        serial.send('STOP');
       },delayStop);
 
     });
@@ -149,11 +150,11 @@ getPort().then(path=>{
       clearTimeout(cancelCommand);
       
       console.log('BACKWARD');
-      //serial.send('BACKWARD');
+      serial.send('BACKWARD');
 
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
-        //serial.send('STOP');
+        serial.send('STOP');
       },delayStop);
 
     });
@@ -165,7 +166,7 @@ getPort().then(path=>{
       clearTimeout(cancelCommand);
       
       console.log('STOP');
-      //serial.send('STOP');
+      serial.send('STOP');
 
     });
 
@@ -175,11 +176,11 @@ getPort().then(path=>{
       clearTimeout(cancelCommand);
       
       console.log('ROT_LEFT');
-      //serial.send('ROT_LEFT');
+      serial.send('ROT_LEFT');
 
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
-        //serial.send('STOP');
+        serial.send('STOP');
       },delayStop);
 
     });
@@ -190,11 +191,11 @@ getPort().then(path=>{
       clearTimeout(cancelCommand);
       
       console.log('ROT_RIGHT');
-      //serial.send('ROT_RIGHT');
+      serial.send('ROT_RIGHT');
 
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
-        //serial.send('STOP');
+        serial.send('STOP');
       },delayStop);
 
     });
