@@ -62,10 +62,12 @@
         //Backward
         backward.onmousedown = ()=>{
 
-            if(lastCommand != 'backward'){
+            clearInterval(lastCommand);
+            socket.emit('backward');
+            lastCommand = setInterval(()=>{
                 socket.emit('backward');
-                lastCommand = 'backward';
-            }
+            },2000);
+            
         }
 
         backward.onmouseout = ()=>{
@@ -74,16 +76,18 @@
         }
 
         backward.onmouseup = ()=>{
+            clearInterval(lastCommand);
             socket.emit('stop');
         }
 
         //Left
         left.onmousedown = ()=>{
 
-            if(lastCommand != 'rotate-left'){
+            clearInterval(lastCommand);
+            socket.emit('rotate-left');
+            lastCommand = setInterval(()=>{
                 socket.emit('rotate-left');
-                lastCommand = 'rotate-left';
-            }
+            },2000);
         }
 
         left.onmouseout = ()=>{
@@ -92,16 +96,18 @@
         }
 
         left.onmouseup = ()=>{
+            clearInterval(lastCommand);
             socket.emit('stop');
         }
 
         //Right
         right.onmousedown = ()=>{
 
-            if(lastCommand != 'rotate-right'){
+            clearInterval(lastCommand);
+            socket.emit('rotate-right');
+            lastCommand = setInterval(()=>{
                 socket.emit('rotate-right');
-                lastCommand = 'rotate-right';
-            }
+            },2000);
             
         }
 
@@ -111,6 +117,7 @@
         }
 
         right.onmouseup = ()=>{
+            clearInterval(lastCommand);
             socket.emit('stop');
         }
 
