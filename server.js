@@ -17,7 +17,7 @@ function getPortsList(){
     return SerialPort.list().then((ports) => {
       
       ports.forEach((port) => {
-        portsList.push(port.path);
+        portsList.push(port);
       });
   
       return portsList;
