@@ -1,10 +1,7 @@
 const nodeCleanup             = require('node-cleanup');
 const SerialPort              = require("serialport");
 const Readline                = require('@serialport/parser-readline');
-const { readFileSync }        = require("fs");
 const { Server }              = require("socket.io");
-const express                 = require("express");
-const path                    = require('path');
 
 const config = {
   port:3000
@@ -88,18 +85,17 @@ function initialize(path){
 
 
 
-
 getPort().then(path=>{
 
-  console.log(path);
-
+ 
   return initialize(path);
+
 
 }).then(serial=>{
 
   const io = new Server({  
     cors: {    
-      origin: "http://localhost:8000"  
+      origin: "*" 
     }
   });
 
@@ -214,18 +210,6 @@ getPort().then(path=>{
 
 
 
-const app = express();
-
-app.get('/',(req,res)=>{
-  res.sendFile(path.join(__dirname, '/ui.html'));
-});
-
-app.listen(8000, (err) => {
-  if(err){
-    throw new Error(err)
-  }
-  console.log("Listening on port 8000")
-})
 
 
 
