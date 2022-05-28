@@ -1,12 +1,11 @@
 function broadcastStream(data){
 
-    //data.videoElement = (typeof data.videoElement != 'undefined') ? data.videoElement : undefined;
-    data.camera       = (typeof data.camera != 'undefined') ? data.camera : undefined;
-    data.microphone   = (typeof data.microphone != 'undefined') ? data.microphone : undefined;
-    data.socket       = (typeof data.socket != 'undefined') ? data.socket : undefined;
-   // data.onMessage    = (typeof data.onMessage != 'undefined') ? data.onMessage : ()=>{};
-    //data.onViewer     = (typeof data.onViewer != 'undefined') ? data.onViewer : ()=>{};
-    data.webRTCconfig = (typeof data.webRTCconfig != 'undefined') ? data.webRTCconfig : {
+    data.clientSocketId = (typeof data.clientSocketId != 'undefined') ? data.clientSocketId : false;
+    data.state          = (typeof data.state != 'undefined') ? data.state : false;
+    data.camera         = (typeof data.camera != 'undefined') ? data.camera : false;
+    data.microphone     = (typeof data.microphone != 'undefined') ? data.microphone : false;
+    data.socket         = (typeof data.socket != 'undefined') ? data.socket : false;
+    data.webRTCconfig   = (typeof data.webRTCconfig != 'undefined') ? data.webRTCconfig : {
         iceServers: [
             { 
             "urls": "stun:stun.l.google.com:19302",
@@ -19,10 +18,25 @@ function broadcastStream(data){
         ]
     };
    
-   
+    if(!data.camera) {
+        return new Promise.reject('Camera not found');
+    }
 
-    let peerConnections = {};
+    if(!data.microphone) {
+        return new Promise.reject('Microphone not found');
+    }
 
+    if(!data.socket) {
+        return new Promise.reject('Socket not found');
+    }
+
+    if(!data.clientSocketId) {
+        return new Promise.reject('Client Socket ID not found');
+    }
+
+    if(!data.state) {
+        return new Promise.reject('State not found');
+    }
 
     if (window.stream) {
         window.stream.getTracks().forEach(track => {
@@ -30,61 +44,38 @@ function broadcastStream(data){
         });
     }
 
-   
-    // const command = {
-    //     publish: ()=>{
-    //         data.socket.emit("publicStream");
-    //     },
-    //     privateStream:()=>{
-    //         data.socket.emit("privateStream");
-    //     },
-    //     end: ()=>{
-    //         peerConnections = {};
-    //         data.socket.emit("endStream");
-    //     },
-    //     send: (message)=>{
-    //         data.socket.emit("sendMessage",data.socket.id,message);
-    //     }
-    // };
+
 
  
 
     return new Promise( (resolve,reject)=>{
 
+        //Open microphone and camera
         navigator.mediaDevices.getUserMedia({
             audio: { deviceId: data.microphone ? { exact: data.microphone } : undefined },
             video: { deviceId: data.camera ? { exact: data.camera } : undefined }
         }).then((stream)=>{
         
-            window.stream                = stream;
-            //data.videoElement.srcObject  = stream;
-            
-
-            //data.socket.on("viewStream", (id,streamId) => {
+            window.stream = stream;
                 
-                const peerConnection    = new RTCPeerConnection(data.webRTCconfig);        
-                //let stream              = data.videoElement.srcObject;
+            const peerConnection    = new RTCPeerConnection(data.webRTCconfig);        
         
-                peerConnections[data.clientId]     = peerConnection;
         
-                stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+            stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
         
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        data.socket.emit("candidate", data.clientId, event.candidate);
-                    }
-                };
-        
-                peerConnection
-                    .createOffer()
-                    .then(sdp => peerConnection.setLocalDescription(sdp))
-                    .then(() => {
-                        data.socket.emit("offer", data.clientId, peerConnection.localDescription,data.state.name);
-                    });
-
-                //Viewer stream
-        
-           // });
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    data.socket.emit("candidate", data.clientSocketId, event.candidate);
+                }
+            };
+            
+            //Send connection offer to client
+            peerConnection
+                .createOffer()
+                .then(sdp => peerConnection.setLocalDescription(sdp))
+                .then(() => {
+                    data.socket.emit("offer", data.clientSocketId, peerConnection.localDescription,data.state.name);
+                });
 
 
             data.socket.on("answer", (id, description) => {
@@ -94,18 +85,34 @@ function broadcastStream(data){
             data.socket.on("candidate", (id, candidate) => {
                 peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
             });
-            
+              
 
-            // data.socket.on("onMessage",(message)=>{
-            //     data.onMessage(message);
-            // });
+            resolve({
+                stopStream:()=>{
 
-            resolve(true);
+                    //Stop all stream
+                    if (window.stream) {
+                        window.stream.getTracks().forEach(track => {
+                            track.stop();
+                        });
+                    }
+                    
+                    //Close peer connection
+                    peerConnection.close();
+                }
+            });
 
         }).catch((err)=>{
             
+            //Stop all stream
+            if (window.stream) {
+                window.stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+            }
+            
             reject(err);
-            console.log('error stream',err);
+            console.log('Error: unable to broadcast',err);
         });
 
     });

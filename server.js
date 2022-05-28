@@ -7,7 +7,7 @@ const config = {
   port:3000
 };
 
-
+//chromium-browser http://www.google.com/ --start-fullscreen
 function getPort(){
    
     return new Promise((resolve,reject) => {
@@ -19,6 +19,7 @@ function getPort(){
             resolve(port.path);
           }
         });
+
       });
 
     });
@@ -36,9 +37,17 @@ function initialize(path){
 
     //Do clean up
     nodeCleanup(()=>{
+
       console.log('CLEAN UP START');
-      port.close();
-      console.log('CLEAN UP END');
+      
+
+      port.write('STOP', function(err) {
+        
+        console.log('CLOSING PORT');
+        port.close();
+        console.log('CLEAN UP END');
+      });
+      
     });
 
     //{ delimiter: '\r\n' }
@@ -110,20 +119,15 @@ getPort().then(path=>{
     console.log('Connected');
     
     let cancelCommand;
-    let status;
     let delayStop = 3000;
 
     
     //Send back serial data
-    /*
+    
     serial.parser.on('data',(data)=>{
-      status = data;
-
-      console.log(data);
-      //socket.emit('data',data);
+      socket.emit('data',data);
     });
     
-    */
     
     //Forward
     socket.on('forward',()=>{
@@ -199,6 +203,12 @@ getPort().then(path=>{
 
     socket.conn.on('close', (reason) => {    
       console.log('Socket closed');
+    });
+
+
+    socket.on('disconnected',()=>{
+      console.log('disconnected');
+      serial.send('STOP');
     });
 
   });
