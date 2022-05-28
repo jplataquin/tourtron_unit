@@ -125,7 +125,15 @@ getPort().then(path=>{
     //Send back serial data
     
     serial.parser.on('data',(data)=>{
-      socket.emit('data',data);
+      
+      let arr = data.split(':');
+
+      //Manual correction of proximity sensor
+      arr[3] = !arr[3];
+      arr[4] = !arr[4];
+      arr[5] = !arr[5];
+
+      socket.emit('data',arr.join(':'));
     });
     
     
