@@ -129,9 +129,9 @@ getPort().then(path=>{
       let arr = data.split(':');
 
       //Manual correction of proximity sensor
-      arr[3] = !arr[3];
-      arr[4] = !arr[4];
-      arr[5] = !arr[5];
+      arr[3] = (parseInt(arr[3]) == 0) ? 1 : 0;
+      arr[4] = (parseInt(arr[4]) == 0) ? 1 : 0;
+      arr[5] = (parseInt(arr[5]) == 0) ? 1 : 0;
 
       socket.emit('data',arr.join(':'));
     });
