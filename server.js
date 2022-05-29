@@ -126,6 +126,8 @@ getPort().then(path=>{
     
     serial.parser.on('data',(data)=>{
       
+      console.log(data);
+      
       let arr = data.split(':');
 
       //Manual correction of proximity sensor
@@ -140,30 +142,34 @@ getPort().then(path=>{
     //Forward
     socket.on('forward',()=>{
       
-      clearTimeout(cancelCommand);
+      //clearTimeout(cancelCommand);
 
       console.log('FORWARD');
       serial.send('FORWARD');
 
+      /*
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
         serial.send('STOP');
       },delayStop);
+      */
 
     });
 
     //Backward
     socket.on('backward',()=>{
       
-      clearTimeout(cancelCommand);
+      //clearTimeout(cancelCommand);
       
       console.log('BACKWARD');
       serial.send('BACKWARD');
 
+      /*
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
         serial.send('STOP');
       },delayStop);
+      */
 
     });
 
@@ -171,7 +177,7 @@ getPort().then(path=>{
     //Stop
     socket.on('stop',()=>{
       
-      clearTimeout(cancelCommand);
+      //clearTimeout(cancelCommand);
       
       console.log('STOP');
       serial.send('STOP');
@@ -181,30 +187,34 @@ getPort().then(path=>{
     //Rotate left
     socket.on('rotate-left',()=>{
       
-      clearTimeout(cancelCommand);
+      //clearTimeout(cancelCommand);
       
       console.log('ROT_LEFT');
       serial.send('ROT_LEFT');
 
+      /*
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
         serial.send('STOP');
       },delayStop);
+      */
 
     });
 
     //Rotate right
     socket.on('rotate-right',()=>{
       
-      clearTimeout(cancelCommand);
+      //clearTimeout(cancelCommand);
       
       console.log('ROT_RIGHT');
       serial.send('ROT_RIGHT');
 
+      /*
       cancelCommand = setTimeout(()=>{
         console.log('-STOP');
         serial.send('STOP');
       },delayStop);
+      */
 
     });
 
