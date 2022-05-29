@@ -126,8 +126,6 @@ getPort().then(path=>{
     
     serial.parser.on('data',(data)=>{
       
-      console.log(data);
-      
       let arr = data.split(':');
 
       //Manual correction of proximity sensor
